@@ -1,6 +1,10 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>auctionservice</w>
+      <w>eurekaserver</w>
+      <w>livenessstate</w>
+      <w>readinessstate</w>
       <w>userservice</w>
     </words>
   </dictionary>

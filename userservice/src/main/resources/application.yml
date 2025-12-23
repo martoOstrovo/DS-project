@@ -2,19 +2,8 @@ spring:
   application:
     name: "userservice"
 
-  datasource:
-    url: jdbc:h2:mem:test_db
-    username: test
-    password: ''
-    driver-class-name: org.h2.Driver
+  profiles:
+    active: "qa"
 
-  h2:
-    console:
-      enabled: true
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-
-server:
-  port: 8080
+  config:
+    import: "optional:configserver:http://localhost:8070/"

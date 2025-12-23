@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(name = "item", description = "Schema to hold item information")
 public class ItemDto {
+    @Schema(description = "id of the item owner", example = "1231")
+    @NotBlank(message = "Please enter owner id")
+    @IsNumber(value = "^[0-9]+$", message = "please enter a valid id")
+    private String userId;
 
     @Schema(description = "name of the item", example = "itemName")
     @NotBlank(message = "Please enter the item name.")

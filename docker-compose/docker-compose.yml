@@ -59,7 +59,7 @@ services:
       service: microservice-configserver-config
 
   userservice:
-    image: martogr/userservice:v1
+    image: martogr/userservice:v2
     container_name: ds-userservice-ms
     ports:
       - "8080:8080"
@@ -77,7 +77,7 @@ services:
 
 
   auctionservice:
-    image: martogr/auctionservice:v1
+    image: martogr/auctionservice:v2
     container_name: ds-auctionservice-ms
     ports:
       - "8081:8081"

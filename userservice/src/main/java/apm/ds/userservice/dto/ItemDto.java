@@ -1,4 +1,4 @@
-package apm.ds.auctionservice.dto;
+package apm.ds.userservice.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

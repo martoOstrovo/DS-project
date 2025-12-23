@@ -1,10 +1,7 @@
 package apm.ds.userservice.controller;
 
 import apm.ds.userservice.constants.UserConstants;
-import apm.ds.userservice.dto.ErrorResponseDto;
-import apm.ds.userservice.dto.ResponseDto;
-import apm.ds.userservice.dto.UserDto;
-import apm.ds.userservice.dto.UserInfoDto;
+import apm.ds.userservice.dto.*;
 import apm.ds.userservice.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -136,6 +133,34 @@ public class UserController {
         return ResponseEntity
                 .ok()
                 .body( new ResponseDto(UserConstants.STATUS_200, UserConstants.MESSAGE_200));
+    }
+
+    @Operation(
+            summary = "Delete User",
+            description = "REST API call to remove a user from the database by their username"
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "HTTP status OK"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP status INTERNAL SERVER ERROR",
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+                    )
+            }
+    )
+    @GetMapping("/get-user-items")
+    public ResponseEntity<UserItemsDto> getUserItems(@NotBlank(message = "Please enter your name.")
+                                                     @RequestParam
+                                                     String username) {
+
+        UserItemsDto userItemsDto = userService.getUserItems(username);
+        return ResponseEntity.
+                ok()
+                .body(userItemsDto);
     }
 
 }

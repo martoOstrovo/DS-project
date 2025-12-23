@@ -9,6 +9,8 @@ import apm.ds.auctionservice.repository.ItemRepository;
 import apm.ds.auctionservice.service.IItemService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,5 +60,13 @@ public class ItemServiceImp implements IItemService {
         }
 
         itemRepository.removeUserByItemName(itemName);
+    }
+
+    @Override
+    public List<ItemDto> getItemsByUserId(Long userId) {
+        List<Item> itemList = itemRepository.findItemsByUserId(userId);
+        return itemList.stream()
+                .map(item -> ItemMapper.mapToDto(item, new ItemDto()))
+                .toList();
     }
 }

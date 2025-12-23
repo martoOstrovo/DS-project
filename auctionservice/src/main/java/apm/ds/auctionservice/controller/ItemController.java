@@ -12,10 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/items", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -71,7 +74,7 @@ public class ItemController {
             }
     )
     @GetMapping("/get-item")
-    public ResponseEntity<ItemDto> getUser(@NotBlank(message = "Please enter the name of your item.")
+    public ResponseEntity<ItemDto> getItem(@NotBlank(message = "Please enter the name of your item.")
                                                @RequestParam
                                                String itemName) {
 
@@ -79,6 +82,34 @@ public class ItemController {
         return ResponseEntity
                 .ok()
                 .body(itemDto);
+    }
+
+    @Operation(
+            summary = "Read Item",
+            description = "REST API call to get an items by their user ID"
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "HTTP status OK"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP status INTERNAL SERVER ERROR",
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+                    )
+            }
+    )
+    @GetMapping("/get-items")
+    public ResponseEntity<List<ItemDto>> getItemsByUserId(@Positive(message = "user id must be a positive integer value")
+                                                              @RequestParam
+                                                              Long userId) {
+
+        List<ItemDto> itemDtoList = itemService.getItemsByUserId(userId);
+        return ResponseEntity
+                .ok()
+                .body(itemDtoList);
     }
 
 
@@ -100,7 +131,7 @@ public class ItemController {
             }
     )
     @PutMapping("/update-item")
-    public ResponseEntity<ResponseDto> updateUser(@Valid @RequestBody ItemDto itemDto) {
+    public ResponseEntity<ResponseDto> updateItem(@Valid @RequestBody ItemDto itemDto) {
         itemService.update(itemDto);
         return ResponseEntity
                 .ok()
@@ -126,7 +157,7 @@ public class ItemController {
             }
     )
     @DeleteMapping("/delete-item")
-    public ResponseEntity<ResponseDto> deleteUser(@NotBlank(message = "Please enter your name.")
+    public ResponseEntity<ResponseDto> deleteItem(@NotBlank(message = "Please enter your name.")
                                                   @RequestParam
                                                   String itemName) {
         itemService.deleteItem(itemName);

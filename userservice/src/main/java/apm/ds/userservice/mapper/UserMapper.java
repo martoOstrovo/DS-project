@@ -2,6 +2,7 @@ package apm.ds.userservice.mapper;
 
 import apm.ds.userservice.dto.UserDto;
 import apm.ds.userservice.dto.UserInfoDto;
+import apm.ds.userservice.dto.UserItemsDto;
 import apm.ds.userservice.entity.User;
 
 public class UserMapper {
@@ -28,5 +29,10 @@ public class UserMapper {
         userInfoDto.setSurname(user.getSurname());
         userInfoDto.setUsername(user.getUsername());
         return userInfoDto;
+    }
+
+    public static UserItemsDto mapToUserItemsDto(User user, UserItemsDto userItemsDto) {
+        userItemsDto.setUsername(user.getUsername());
+        return  userItemsDto;
     }
 }

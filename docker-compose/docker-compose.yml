@@ -1,0 +1,103 @@
+services:
+  auctionservice_db:
+    container_name: ds-auctionservice-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: auctionservice_db
+    volumes:
+      - auctionservice_db_data:/var/lib/mysql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  userservice_db:
+    container_name: ds-userservice-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: userservice_db
+    volumes:
+      - userservice_db_data:/var/lib/mysql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  configserver:
+    image: martogr/configserver:v1
+    container_name: ds-configserver-ms
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  eurekaserver:
+    image: martogr/eurekaserver:v1
+    container_name: ds-eurekaserver-ms
+    ports:
+      - "8071:8071"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  userservice:
+    image: martogr/userservice:v1
+    container_name: ds-userservice-ms
+    ports:
+      - "8080:8080"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "userservice"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://userservice_db:3306/userservice_db"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+
+  auctionservice:
+    image: martogr/auctionservice:v1
+    container_name: ds-auctionservice-ms
+    ports:
+      - "8081:8081"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "auctionservice"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://auctionservice_db:3306/auctionservice_db"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+networks:
+  DS-project-network:
+    driver: bridge
+
+volumes:
+  auctionservice_db_data:
+  userservice_db_data:
+
